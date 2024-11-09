@@ -130,3 +130,7 @@ via*.json
 !/keyboards/zsa/**/keymaps/default/**
 !/keyboards/zsa/**/keymaps/oryx
 !/keyboards/zsa/**/keymaps/oryx/**
+
+# erin's config is somewhere else but i still want it in git
+!/keyboards/zsa/planck_ez/keymaps/yeet
+!/keyboards/zsa/planck_ez/keymaps/yeet/**
