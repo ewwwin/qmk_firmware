@@ -28,6 +28,8 @@ enum planck_layers {
   // raise layers
   _RAISE,
   // _XIVRAISE, // TODO: do we need one
+
+  // adjust layers
   _ADJUST,
   _XIVADJUST,
 
@@ -109,13 +111,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_,  KC_,  KC_,  KC_,  MO(_XIVLOWER),  KC_,  KC_NO,  MO(_RAISE),  KC_,  KC_,  KC_,  KC_
   ),
 
-  // this layer has all the hotbar keybinds on it. these are not the standard
-  // hotbar binds in XIV but i use them consistently
+  // this is the normal lower layer, except that layer has all the hotbar
+  // keybinds on it. my in-game hotbar binds look like this for reference:
+  //   [1]     `      1      2      3      4      5      6  q     e  r  t
+  //   [2] alt+`  alt+1  alt+2  alt+3  alt+4  alt+5  alt+6           f  g
+  //   [3] ctl+`  ctl+1  ctl+2  ctl+3  ctl+4  ctl+5  ctl+6  z  x  c  v  b
+  // note that the keymap sends shift+{`,1-6} on the top row even though my
+  // hotbars keybinds don't expect the shift modifier for hotbar 1. this still
+  // works because i don't have any other things mapped to shift+{`,1-6}, and
+  // doing it this way lets me use this like a normal lower layer for typing
+  // symbols in chat. similarly, i can't map 7890- across because i want to be
+  // able to type _+{} normally, so i need to leave the right four columns
+  // identical to the normal lower layer
   [_XIVLOWER] = LAYOUT_planck_grid(
-    KC_GRAVE,        KC_1,        KC_2,        KC_3,        KC_4,        KC_5,        KC_6,        KC_7,        KC_8,        KC_9,        KC_0,        KC_MINUS,
-    LALT(KC_GRAVE),  LALT(KC_1),  LALT(KC_2),  LALT(KC_3),  LALT(KC_4),  LALT(KC_5),  LALT(KC_6),  LALT(KC_7),  LALT(KC_8),  LALT(KC_9),  LALT(KC_0),  LALT(KC_MINUS),
-    LCTL(KC_GRAVE),  LCTL(KC_1),  LCTL(KC_2),  LCTL(KC_3),  LCTL(KC_4),  LCTL(KC_5),  LCTL(KC_6),  LCTL(KC_7),  LCTL(KC_8),  LCTL(KC_9),  LCTL(KC_0),  LCTL(KC_MINUS),
-    KC_NO,           KC_NO,       KC_NO,       KC_NO,       KC_,         KC_,         KC_NO,       KC_,         KC_NO,       KC_NO,       KC_NO,       KC_NO
+    LSFT(KC_GRAVE),  LSFT(KC_1),  LSFT(KC_2),  LSFT(KC_3),  LSFT(KC_4),  LSFT(KC_5),  LSFT(KC_6),  KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,     KC_,
+    LALT(KC_GRAVE),  LALT(KC_1),  LALT(KC_2),  LALT(KC_3),  LALT(KC_4),  LALT(KC_5),  LALT(KC_6),  KC_UNDS,  KC_PLUS,  KC_LCBR,  KC_RCBR,     KC_PIPE,
+    LCTL(KC_GRAVE),  LCTL(KC_1),  LCTL(KC_2),  LCTL(KC_3),  LCTL(KC_4),  LCTL(KC_5),  LCTL(KC_6),  KC_,      KC_,      KC_,      KC_,         KC_,
+    KC_NO,           KC_NO,       KC_NO,       KC_NO,       KC_,         KC_,         KC_NO,       KC_,      KC_HOME,  KC_PGDN,  KC_PAGE_UP,  KC_END
   ),
 
   // this layer is only ever going to be touched while typing because the raise
@@ -156,7 +168,8 @@ enum led_maps {
   LED_FN,
   LED_MODE_SELECT,
   LED_XIV,
-  LED_XIV_HOTBARS,
+  LED_XIV_LOWER,
+  LED_XIV_BGONLY,
   LED_LOL,
   LED_IJKL,
 };
@@ -188,17 +201,23 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
     {32,255,115}, {32,255,115}, {32,255,115}, {32,255,115}, {32,255,115}, {32,255,115},               {32,255,115}, {32,255,115}, {32,255,115}, {32,255,115}, {32,255,115}
   },
   [LED_XIV] = {
-    {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210},
-    {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210},
-    {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210},
-    {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210},                {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}, {171,219,210}
+    {171,219,115}, {171,178,255}, {171,219,115}, {171,178,255}, {171,178,255}, {171,178,255}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,178,255}, {171,178,255}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,210},                {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}
   },
-  [LED_XIV_HOTBARS] = {
-    {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255},
-    {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255},
-    {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255},
-    {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
+  [LED_XIV_LOWER] = {
+    {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,178,255}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},                {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}
   },
+  [LED_XIV_BGONLY] = {
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},
+    {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115},                {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}, {171,219,115}
+  }
 };
 
 void apply_led_map(int map) {
@@ -237,18 +256,21 @@ bool rgb_matrix_indicators_user(void) {
       apply_led_map(LED_LOL);
       break;
     case _XIV:
-    case _XIVADJUST:
       apply_led_map(LED_XIV);
       break;
     case _XIVLOWER:
-      apply_led_map(LED_XIV_HOTBARS);
+      apply_led_map(LED_XIV_LOWER);
+      break;
+    // case _XIVRAISE:
+    case _XIVADJUST:
+      apply_led_map(LED_XIV_BGONLY);
       break;
 
     // raise doesn't normally get any special handling, but we do want it to use
     // the LED setting for XIV if the XIV base layer is active underneath it
     case _RAISE:
       if (layer_state & (1 << _XIV)) {
-        apply_led_map(LED_XIV);
+        apply_led_map(LED_XIV_BGONLY);
         break;
       }
       // else case intentionally falls through to default behavior
